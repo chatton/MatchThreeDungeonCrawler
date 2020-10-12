@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Util;
@@ -10,28 +11,19 @@ namespace MatchThree
         [SerializeField] private int width = 5;
         [SerializeField] private int height = 5;
         [SerializeField] private int matchNumber = 3;
+        [SerializeField] private float initialGemSpawnOffset = 10f;
 
 
         private static readonly List<Gem> NoMatches = new List<Gem>();
 
         // the current gem that is selected
         private Gem CurrentlySelectedGem { get; set; }
-
         private GemSource _gemSource;
-        // private Gem[,] _gems;
-
-        // private Dictionary<(int, int), Gem> _gemDictionary;
-        // private Dictionary<Gem, (int, int)> _gemCoordDictionary;
-
         private MultiMap<Gem, (int, int)> _gemDict;
 
         private void Awake()
         {
             _gemSource = GetComponent<GemSource>();
-            // _gems = new Gem[width, height];
-            // _gemDictionary = new Dictionary<(int, int), Gem>();
-            // _gemCoordDictionary = new Dictionary<Gem, (int, int)>();
-
             _gemDict = new MultiMap<Gem, (int, int)>();
         }
 
@@ -59,13 +51,13 @@ namespace MatchThree
             }
         }
 
-        public void SelectGem(Gem gem)
+        public IEnumerator SelectGem(Gem gem)
         {
             if (CurrentlySelectedGem == null)
             {
                 CurrentlySelectedGem = gem;
                 Debug.Log($"Set gem ${gem.name} as CurrentlySelectedGem");
-                return;
+                yield break;
             }
 
             if (CanSwapGems(CurrentlySelectedGem, gem))
@@ -73,7 +65,7 @@ namespace MatchThree
                 SwapGems(CurrentlySelectedGem, gem);
                 List<Gem> currentlySelectedGemMatches = CheckForMatches(CurrentlySelectedGem);
                 List<Gem> matches = CheckForMatches(gem);
-                MatchGems(currentlySelectedGemMatches.Union(matches).ToList());
+                yield return MatchGems(currentlySelectedGemMatches.Union(matches).ToList());
                 // CollapseColumns();
                 CurrentlySelectedGem = null;
             }
@@ -162,8 +154,9 @@ namespace MatchThree
             return gem0Matches.Union(gem1Matches).Distinct().Any();
         }
 
-        private void MatchGems(List<Gem> matchedGems)
+        private IEnumerator MatchGems(List<Gem> matchedGems)
         {
+            yield return new WaitForSeconds(0.5f);
             foreach (Gem gem in matchedGems)
             {
                 if (gem != null)
@@ -214,45 +207,6 @@ namespace MatchThree
 
             return true;
         }
-        //
-        // private void SwapVisualPositions(Gem gem0, Gem gem1)
-        // {
-        //     Vector3 pos0 = gem0.transform.localPosition;
-        //     Vector3 pos1 = gem1.transform.localPosition;
-        //
-        //     // update the in world positions of the game objects
-        //     gem0.transform.localPosition = pos1;
-        //     gem1.transform.localPosition = pos0;
-        // }
-
-        // Swap Gems swaps the two provided gems, validation is expected to
-        // have been done before hand
-        // private void SwapGems(Gem gem0, Gem gem1)
-        // {
-        // Vector3 pos0 = gem0.transform.localPosition;
-        // Vector3 pos1 = gem1.transform.localPosition;
-
-        // update the in world positions of the game objects
-        // gem0.transform.localPosition = pos1;
-        // gem1.transform.localPosition = pos0;
-
-        // (int, int) gem0Coords = GetGemCoordinates(gem0);
-        // (int, int) gem1Coords = GetGemCoordinates(gem1);
-
-        // string tempName = gem1.name;
-        // gem1.name = gem0.name;
-        // gem0.name = tempName;
-
-        // update the backing array of the new positions
-        // _gems[gem0Coords.Item1, gem0Coords.Item2] = gem1;
-        // _gems[gem1Coords.Item1, gem1Coords.Item2] = gem0;
-        // }
-
-
-        // private Gem GetGem((int, int) coords)
-        // {
-        // return _gemDictionary[coords];
-        // }
 
         private void SwapGems(Gem gem0, Gem gem1)
         {
@@ -264,23 +218,15 @@ namespace MatchThree
             Gem gem0 = _gemDict.Get(gem0Coords);
             Gem gem1 = _gemDict.Get(gem1Coords);
 
-
             if (gem0 != null)
             {
-                // Update visuals
+                gem0.UpdatePosition(gem0Coords, gem1Coords);
             }
 
             if (gem1 != null)
             {
-                // Update visuals
+                gem1.UpdatePosition(gem1Coords, gem0Coords);
             }
-
-            // Vector3 pos0 = gem0.transform.localPosition;
-            // Vector3 pos1 = gem1.transform.localPosition;
-
-            // update the in world positions of the game objects
-            // gem0.transform.localPosition = pos1;
-            // gem1.transform.localPosition = pos0;
 
             _gemDict.Add(gem0, gem1Coords);
             _gemDict.Add(gem1, gem0Coords);
