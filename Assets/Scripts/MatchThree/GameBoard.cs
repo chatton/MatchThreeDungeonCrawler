@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 using Util;
 
@@ -51,7 +52,8 @@ namespace MatchThree
             }
         }
 
-        public IEnumerator SelectGem(Gem gem)
+
+        private IEnumerator SelectGemRoutine(Gem gem)
         {
             if (CurrentlySelectedGem == null)
             {
@@ -66,7 +68,8 @@ namespace MatchThree
                 List<Gem> currentlySelectedGemMatches = CheckForMatches(CurrentlySelectedGem);
                 List<Gem> matches = CheckForMatches(gem);
                 yield return MatchGems(currentlySelectedGemMatches.Union(matches).ToList());
-                // CollapseColumns();
+                yield return new WaitForSeconds(0.2f);
+                CollapseColumns();
                 CurrentlySelectedGem = null;
             }
             else
@@ -76,69 +79,58 @@ namespace MatchThree
             }
         }
 
-
-        // private bool ColumnIsFull(int columnIndex)
-        // {
-        // for (int i = 0; i < height; i++)
-        // {
-        // if (_gems[i, columnIndex] == null)
-        // {
-        // return false;
-        // }
-        // }
-
-        // return true;
-        // }
+        public void SelectGem(Gem gem)
+        {
+            StartCoroutine(SelectGemRoutine(gem));
+        }
 
 
-        // private void ShiftDown(int columnIndex)
-        // {
-        // for (int i = 0; i < height - 1; i++)
-        // {
-        // while (_gems[i, columnIndex] == null)
-        // {
-        // SwapGems(_gems[i, columnIndex], _gems[i + 1, columnIndex]);
-        // _gems[i, columnIndex] = _gems[i + 1, columnIndex];
-        // }
+        private void CollapseColumns()
+        {
+            for (int i = 0; i < width; i++)
+            {
+                CollapseColumn(i);
+            }
+        }
 
-        // we have shifted down all of the gems, only nulls above
-        // these will be filled in later!
-        // if (NoGemsAbove(i, columnIndex))
-        // {
-        // return;
-        // }
-        // }
-        // }
 
-        // private bool NoGemsAbove(int row, int col)
-        // {
-        // for (int i = row + 1; i < height; i++)
-        // {
-        // if (_gems[row, col] != null)
-        // {
-        // return false;
-        // }
-        // }
+        private Gem FindFirstActiveGemAbove(int startRow, int column)
+        {
+            // we look vertically for a non disabled gem
+            for (int i = startRow + 1; i < height; i++)
+            {
+                Gem gem = _gemDict.Get((column, i));
+                if (gem.gameObject.activeSelf)
+                {
+                    // we found the next gem above us, we can swap with it
+                    // so it falls down
+                    return gem;
+                }
+            }
 
-        // return true;
-        // }
+            return null;
+        }
 
-        // private void CollapseColumn(int columnIndex)
-        // {
-        // while (!ColumnIsFull(columnIndex))
-        // {
-        // ShiftDown(columnIndex);
-        // }
-        // }
+        private void CollapseColumn(int columnIndex)
+        {
+            for (int i = 0; i < height; i++)
+            {
+                // yield return new WaitForSeconds(1f);
+                // Gem gem = _gemDict.Get((i, columnIndex));
+                Gem gem = _gemDict.Get((columnIndex, i));
 
-        // private void CollapseColumns()
-        // {
-        // for (int i = 0; i < width; i++)
-        // {
-        // Debug.Log($"Collapsing column {i}");
-        // CollapseColumn(i);
-        // }
-        // }
+                // there is a gap in the column. We can look up for the first
+                // non null gem to fill this position with
+                if (!gem.gameObject.activeSelf)
+                {
+                    Gem gemAbove = FindFirstActiveGemAbove(i, columnIndex);
+                    if (gemAbove != null)
+                    {
+                        SwapGems(gem, gemAbove);
+                    }
+                }
+            }
+        }
 
         private bool SwappingGemsWouldResultInMatch(Gem gem0, Gem gem1)
         {
@@ -159,13 +151,13 @@ namespace MatchThree
             yield return new WaitForSeconds(0.5f);
             foreach (Gem gem in matchedGems)
             {
-                if (gem != null)
-                {
-                    (int, int) gemCoords = _gemDict.Get(gem);
-                    _gemDict.Add(gem, (gemCoords.Item1, gemCoords.Item2));
-                    Destroy(gem.gameObject);
-                }
+                Debug.Log($"Matching gem {gem.name}");
+                (int, int) gemCoords = _gemDict.Get(gem);
+                _gemDict.Add(gem, (gemCoords.Item1, gemCoords.Item2));
+                gem.gameObject.SetActive(false);
             }
+
+            yield return null;
         }
 
 
@@ -218,15 +210,8 @@ namespace MatchThree
             Gem gem0 = _gemDict.Get(gem0Coords);
             Gem gem1 = _gemDict.Get(gem1Coords);
 
-            if (gem0 != null)
-            {
-                gem0.UpdatePosition(gem0Coords, gem1Coords);
-            }
-
-            if (gem1 != null)
-            {
-                gem1.UpdatePosition(gem1Coords, gem0Coords);
-            }
+            gem0.UpdatePosition(gem0Coords, gem1Coords);
+            gem1.UpdatePosition(gem1Coords, gem0Coords);
 
             _gemDict.Add(gem0, gem1Coords);
             _gemDict.Add(gem1, gem0Coords);
@@ -303,7 +288,7 @@ namespace MatchThree
             while (currentX < width)
             {
                 Gem currentGem = _gemDict.Get((currentX, gemCoords.Item2));
-                if (currentGem == null)
+                if (!currentGem.gameObject.activeSelf)
                 {
                     break;
                 }
@@ -322,7 +307,7 @@ namespace MatchThree
             while (currentX >= 0)
             {
                 Gem currentGem = _gemDict.Get((currentX, gemCoords.Item2));
-                if (currentGem == null)
+                if (!currentGem.gameObject.activeSelf)
                 {
                     break;
                 }

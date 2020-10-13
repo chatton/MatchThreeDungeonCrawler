@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace MatchThree
@@ -9,13 +10,18 @@ namespace MatchThree
         public MatchType MatchType => matchType;
         internal GameBoard GameBoard { get; set; }
 
-
         private Vector3 _targetPosition;
 
         public void UpdatePosition((int, int) oldPosition, (int, int) newPosition)
         {
             _targetPosition = new Vector3(newPosition.Item1 * transform.localScale.x,
                 newPosition.Item2 * transform.localScale.y, 0);
+
+            // if the object is disabled just immediately teleport to the new position
+            if (!gameObject.activeSelf)
+            {
+                transform.localPosition = _targetPosition;
+            }
         }
 
         private void Update()
@@ -31,7 +37,7 @@ namespace MatchThree
 
         public void OnMouseDown()
         {
-            StartCoroutine(GameBoard.SelectGem(this));
+            GameBoard.SelectGem(this);
         }
     }
 }
