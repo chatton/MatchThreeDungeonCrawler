@@ -21,6 +21,8 @@ namespace MatchThree
         private GemSource _gemSource;
         private MultiMap<Gem, (int, int)> _gemDict;
 
+        private bool _matchInProgress;
+
         private void Awake()
         {
             _gemSource = GetComponent<GemSource>();
@@ -74,6 +76,13 @@ namespace MatchThree
                 yield break;
             }
 
+            if (_matchInProgress)
+            {
+                yield return null;
+            }
+
+            _matchInProgress = true;
+
             Gem currentGem = CurrentlySelectedGem;
             CurrentlySelectedGem = null;
             if (CanSwapGems(currentGem, gem))
@@ -81,6 +90,8 @@ namespace MatchThree
                 SwapGems(currentGem, gem);
                 yield return MatchUntilStable();
             }
+
+            _matchInProgress = false;
         }
 
 
@@ -92,7 +103,8 @@ namespace MatchThree
             {
                 yield return MatchGems(_matchedGemsSet);
                 yield return new WaitForSeconds(0.2f);
-                CollapseColumns();
+                yield return CollapseColumns();
+                yield return MatchGems(_matchedGemsSet);
                 yield return FillBoard();
             }
         }
@@ -103,11 +115,11 @@ namespace MatchThree
         }
 
 
-        private void CollapseColumns()
+        private IEnumerator CollapseColumns()
         {
             for (int i = 0; i < width; i++)
             {
-                CollapseColumn(i);
+                yield return CollapseColumn(i);
             }
         }
 
@@ -129,7 +141,7 @@ namespace MatchThree
             return null;
         }
 
-        private void CollapseColumn(int columnIndex)
+        private IEnumerator CollapseColumn(int columnIndex)
         {
             for (int i = 0; i < height; i++)
             {
@@ -143,6 +155,9 @@ namespace MatchThree
                     if (gemAbove != null)
                     {
                         SwapGems(gem, gemAbove);
+                        _matchedGemsSet.Clear();
+                        // yield return new WaitForGemsToReachDestination(gemAbove);
+                        yield return CheckForMatches(gemAbove);
                     }
                 }
             }
