@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -13,7 +14,13 @@ namespace MatchThree
         [SerializeField] private int matchNumber = 3;
 
 
-        private static readonly List<Gem> NoMatches = new List<Gem>();
+        private static readonly HashSet<Gem> NoMatches = new HashSet<Gem>();
+
+        // private static readonly List<Gem> MatchList = new List<Gem>();
+        private static readonly List<Gem> MatchList = new List<Gem>();
+        private static HashSet<Gem> MatchedGemsSet = new HashSet<Gem>();
+        private static readonly HashSet<Gem> MatchedGemsHorizontalSet = new HashSet<Gem>();
+        private static readonly HashSet<Gem> MatchedGemsVerticalSet = new HashSet<Gem>();
 
         // the current gem that is selected
         private Gem CurrentlySelectedGem { get; set; }
@@ -63,19 +70,16 @@ namespace MatchThree
             if (CanSwapGems(CurrentlySelectedGem, gem))
             {
                 SwapGems(CurrentlySelectedGem, gem);
-                List<Gem> currentlySelectedGemMatches = CheckForMatches(CurrentlySelectedGem);
-                List<Gem> matches = CheckForMatches(gem);
-                yield return MatchGems(currentlySelectedGemMatches.Union(matches).ToList());
+                // HashSet<Gem> currentlySelectedGemMatches = CheckForMatches(CurrentlySelectedGem);
+                // HashSet<Gem> matches = CheckForMatches(gem);
+                // yield return MatchGems(currentlySelectedGemMatches.Union(matches).ToList());
+                yield return MatchGems(MatchedGemsSet);
                 yield return new WaitForSeconds(0.2f);
                 CollapseColumns();
                 yield return FillBoard();
-                CurrentlySelectedGem = null;
             }
-            else
-            {
-                // animation to show gems can't perform swap
-                CurrentlySelectedGem = null;
-            }
+
+            CurrentlySelectedGem = null;
         }
 
         public void SelectGem(Gem gem)
@@ -135,17 +139,18 @@ namespace MatchThree
         {
             // update board to see if there is a match after this move
             SwapGems(gem0, gem1);
-            List<Gem> gem0Matches = CheckForMatches(gem0);
-            List<Gem> gem1Matches = CheckForMatches(gem1);
+            MatchedGemsSet.Clear();
+            CheckForMatches(gem0);
+            CheckForMatches(gem1);
 
             // reset the board to previous state
             SwapGems(gem0, gem1);
 
             // if there were any valid matches, this move was valid
-            return gem0Matches.Union(gem1Matches).Distinct().Any();
+            return MatchedGemsSet.Count > 0;
         }
 
-        private IEnumerator MatchGems(List<Gem> matchedGems)
+        private IEnumerator MatchGems(IEnumerable<Gem> matchedGems)
         {
             yield return new WaitForSeconds(0.5f);
             foreach (Gem gem in matchedGems)
@@ -189,11 +194,11 @@ namespace MatchThree
                 return false;
             }
 
-            // if (!SwappingGemsWouldResultInMatch(gem0, gem1))
-            // {
-            //     Debug.Log("Attempted to match gems that would not have resulted in a match!");
-            //     return false;
-            // }
+            if (!SwappingGemsWouldResultInMatch(gem0, gem1))
+            {
+                Debug.Log("Attempted to match gems that would not have resulted in a match!");
+                return false;
+            }
 
             return true;
         }
@@ -241,7 +246,7 @@ namespace MatchThree
                 SwapGems(newGem, gem);
             }
 
-            yield return new WaitForSeconds(3);
+            // yield return new WaitForSeconds(3);
             foreach (Gem gem in newGems)
             {
                 yield return MatchGems(CheckForMatches(gem));
@@ -249,18 +254,19 @@ namespace MatchThree
         }
 
 
-        private List<Gem> CheckForMatches(Gem gem)
+        private HashSet<Gem> CheckForMatches(Gem gem)
         {
-            List<Gem> horizontalMatches = CheckForHorizontalMatch(gem);
-            horizontalMatches.AddRange(CheckForVerticalMatch(gem));
-            return horizontalMatches.Distinct().ToList();
+            MatchedGemsSet = CheckForHorizontalMatch(gem);
+            MatchedGemsSet = CheckForVerticalMatch(gem);
+            return MatchedGemsSet;
+            // horizontalMatches.AddRange(CheckForVerticalMatch(gem));
+            // return horizontalMatches.Distinct().ToList();
         }
 
-        private List<Gem> CheckForVerticalMatch(Gem gem)
+        private HashSet<Gem> CheckForVerticalMatch(Gem gem)
         {
             (int, int) gemCoords = _gemDict.Get(gem);
-
-            HashSet<Gem> matchedGems = new HashSet<Gem>();
+            MatchedGemsVerticalSet.Clear();
 
             int currentY = gemCoords.Item2;
             while (currentY < height)
@@ -276,7 +282,7 @@ namespace MatchThree
                     break;
                 }
 
-                matchedGems.Add(currentGem);
+                MatchedGemsVerticalSet.Add(currentGem);
                 currentY++;
             }
 
@@ -295,26 +301,28 @@ namespace MatchThree
                     break;
                 }
 
-                matchedGems.Add(currentGem);
+                MatchedGemsVerticalSet.Add(currentGem);
                 currentY--;
             }
 
 
-            if (matchedGems.Count >= matchNumber)
+            if (MatchedGemsVerticalSet.Count >= matchNumber)
             {
-                return matchedGems.ToList();
+                MatchedGemsSet.UnionWith(MatchedGemsVerticalSet);
+                return MatchedGemsSet;
             }
 
             return NoMatches;
         }
 
 
-        private List<Gem> CheckForHorizontalMatch(Gem gem)
+        private HashSet<Gem> CheckForHorizontalMatch(Gem gem)
         {
+            MatchedGemsHorizontalSet.Clear();
+
             (int, int) gemCoords = _gemDict.Get(gem);
 
-            HashSet<Gem> matchedGems = new HashSet<Gem>();
-
+            // int matchCount = 0;
             int currentX = gemCoords.Item1;
             while (currentX < width)
             {
@@ -329,7 +337,8 @@ namespace MatchThree
                     break;
                 }
 
-                matchedGems.Add(currentGem);
+                MatchedGemsHorizontalSet.Add(currentGem);
+                // matchCount++;
                 currentX++;
             }
 
@@ -348,14 +357,16 @@ namespace MatchThree
                     break;
                 }
 
-                matchedGems.Add(currentGem);
+                MatchedGemsHorizontalSet.Add(currentGem);
+                // matchCount++;
                 currentX--;
             }
 
 
-            if (matchedGems.Count >= matchNumber)
+            if (MatchedGemsHorizontalSet.Count >= matchNumber)
             {
-                return matchedGems.ToList();
+                MatchedGemsSet.UnionWith(MatchedGemsHorizontalSet);
+                return MatchedGemsSet;
             }
 
             return NoMatches;
