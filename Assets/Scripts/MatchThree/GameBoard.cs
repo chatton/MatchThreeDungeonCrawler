@@ -79,6 +79,17 @@ namespace MatchThree
             if (CanSwapGems(currentGem, gem))
             {
                 SwapGems(currentGem, gem);
+                yield return MatchUntilStable();
+            }
+        }
+
+
+        // MatchUntilStable will continuously perform gem matches
+        // and refill the board until there are no more matches
+        private IEnumerator MatchUntilStable()
+        {
+            while (_matchedGemsSet.Count > 0)
+            {
                 yield return MatchGems(_matchedGemsSet);
                 yield return new WaitForSeconds(0.2f);
                 CollapseColumns();
@@ -122,12 +133,10 @@ namespace MatchThree
         {
             for (int i = 0; i < height; i++)
             {
-                // yield return new WaitForSeconds(1f);
-                // Gem gem = _gemDict.Get((i, columnIndex));
                 Gem gem = _gemDict.Get((columnIndex, i));
 
                 // there is a gap in the column. We can look up for the first
-                // non null gem to fill this position with
+                // non active gem to fill this position with
                 if (!gem.gameObject.activeSelf)
                 {
                     Gem gemAbove = FindFirstActiveGemAbove(i, columnIndex);
@@ -234,8 +243,6 @@ namespace MatchThree
                 if (!gem.gameObject.activeSelf && coords.Item1 >= 0 && coords.Item1 < width && coords.Item2 >= 0 &&
                     coords.Item2 < width)
                 {
-                    Debug.Log(coords);
-                    Debug.Log($"Disabled gem {gem.name}", gem);
                     disabledGems.Add(gem);
                 }
             }
@@ -338,7 +345,6 @@ namespace MatchThree
 
             (int, int) gemCoords = _gemDict.Get(gem);
 
-            // int matchCount = 0;
             int currentX = gemCoords.Item1;
             while (currentX < width)
             {
