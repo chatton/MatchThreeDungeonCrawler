@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace MatchThree
@@ -9,6 +8,7 @@ namespace MatchThree
         [SerializeField] private float moveSpeed = 5f;
         public MatchType MatchType => matchType;
         internal GameBoard GameBoard { get; set; }
+        internal GemSource GemSource { get; set; }
 
         private Vector3 _targetPosition;
 
@@ -24,6 +24,8 @@ namespace MatchThree
             }
         }
 
+        private void OnDisable() => GemSource.ReturnToPool(this);
+
         private void Update()
         {
             if (_targetPosition == Vector3.zero)
@@ -38,6 +40,12 @@ namespace MatchThree
         public void OnMouseDown()
         {
             GameBoard.SelectGem(this);
+        }
+
+        public void SetPosition((int, int) valueTuple)
+        {
+            transform.localPosition = new Vector3(valueTuple.Item1 * transform.localScale.x,
+                valueTuple.Item2 * transform.localScale.y, 0);
         }
     }
 }

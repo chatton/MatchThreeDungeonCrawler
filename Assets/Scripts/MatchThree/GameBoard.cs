@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using UnityEngine;
 using Util;
 
@@ -12,7 +11,6 @@ namespace MatchThree
         [SerializeField] private int width = 5;
         [SerializeField] private int height = 5;
         [SerializeField] private int matchNumber = 3;
-        [SerializeField] private float initialGemSpawnOffset = 10f;
 
 
         private static readonly List<Gem> NoMatches = new List<Gem>();
@@ -42,7 +40,7 @@ namespace MatchThree
             {
                 for (int j = 0; j < height; j++)
                 {
-                    Gem gem = _gemSource.GetNextGem(this);
+                    Gem gem = _gemSource.GetNextGem();
                     gem.transform.parent = transform;
                     gem.transform.localPosition =
                         new Vector3(i * gem.transform.localScale.x, j * gem.transform.localScale.y, 0);
@@ -70,6 +68,7 @@ namespace MatchThree
                 yield return MatchGems(currentlySelectedGemMatches.Union(matches).ToList());
                 yield return new WaitForSeconds(0.2f);
                 CollapseColumns();
+                FillBoard();
                 CurrentlySelectedGem = null;
             }
             else
@@ -151,7 +150,6 @@ namespace MatchThree
             yield return new WaitForSeconds(0.5f);
             foreach (Gem gem in matchedGems)
             {
-                Debug.Log($"Matching gem {gem.name}");
                 (int, int) gemCoords = _gemDict.Get(gem);
                 _gemDict.Add(gem, (gemCoords.Item1, gemCoords.Item2));
                 gem.gameObject.SetActive(false);
@@ -218,6 +216,31 @@ namespace MatchThree
         }
 
 
+        private void FillBoard()
+        {
+            List<Gem> disabledGems = new List<Gem>();
+            foreach (Gem gem in _gemDict)
+            {
+                (int, int) coords = _gemDict.Get(gem);
+                if (!gem.gameObject.activeSelf && coords.Item1 >= 0 && coords.Item1 < width && coords.Item2 >= 0 &&
+                    coords.Item2 < width)
+                {
+                    disabledGems.Add(gem);
+                }
+            }
+
+            foreach (Gem gem in disabledGems)
+            {
+                Gem newGem = _gemSource.GetNextGem();
+                (int, int) cords = _gemDict.Get(gem);
+                newGem.transform.parent = transform;
+                newGem.SetPosition((cords.Item1, cords.Item2 + height));
+                _gemDict.Add(newGem, (cords.Item1, cords.Item2 + height));
+                SwapGems(newGem, gem);
+            }
+        }
+
+
         private List<Gem> CheckForMatches(Gem gem)
         {
             List<Gem> horizontalMatches = CheckForHorizontalMatch(gem);
@@ -235,7 +258,7 @@ namespace MatchThree
             while (currentY < height)
             {
                 Gem currentGem = _gemDict.Get((gemCoords.Item1, currentY));
-                if (currentGem == null)
+                if (!currentGem.gameObject.activeSelf)
                 {
                     break;
                 }
@@ -254,7 +277,7 @@ namespace MatchThree
             while (currentY >= 0)
             {
                 Gem currentGem = _gemDict.Get((gemCoords.Item1, currentY));
-                if (currentGem == null)
+                if (!currentGem.gameObject.activeSelf)
                 {
                     break;
                 }
