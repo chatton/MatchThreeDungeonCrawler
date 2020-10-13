@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using MatchThree;
+using MatchThree.Gems;
 using UnityEngine;
 
 namespace Util
@@ -12,11 +12,6 @@ namespace Util
         public WaitForGemsToReachDestination(IEnumerable<Gem> gems)
         {
             _gems = gems;
-        }
-
-        public WaitForGemsToReachDestination(Gem gem)
-        {
-            _gems = new List<Gem> {gem};
         }
 
         public override bool keepWaiting => _gems.Any(gem => !gem.HasReachedTargetPosition);
