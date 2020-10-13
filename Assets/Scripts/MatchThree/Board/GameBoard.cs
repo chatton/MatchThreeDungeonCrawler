@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using DungeonCrawler;
 using MatchThree.Gems;
+using UnityEditor;
 using UnityEngine;
 using Util;
 
@@ -24,10 +26,13 @@ namespace MatchThree.Board
 
         private bool _matchInProgress;
 
+        private Player _player;
+
         private void Awake()
         {
             _gemSource = GetComponent<GemSource>();
             _gemDict = new MultiMap<Gem, (int, int)>();
+            _player = FindObjectOfType<Player>();
         }
 
 
@@ -99,14 +104,18 @@ namespace MatchThree.Board
         // and refill the board until there are no more matches
         private IEnumerator MatchUntilStable()
         {
+            Dictionary<GemEffectType, GemResult> results = BuildNewGemResultDictionary();
             while (_matchedGemsSet.Count > 0)
             {
-                yield return MatchGems(_matchedGemsSet);
+                Debug.Log(_matchedGemsSet.Count);
+                yield return MatchGems(_matchedGemsSet, results);
                 yield return new WaitForSeconds(0.2f);
                 yield return CollapseColumns();
-                yield return MatchGems(_matchedGemsSet);
+                yield return MatchGems(_matchedGemsSet, results);
                 yield return FillBoard();
             }
+
+            yield return GemAction.PerformActions(results);
         }
 
         public void SelectGem(Gem gem)
@@ -178,19 +187,31 @@ namespace MatchThree.Board
             return _matchedGemsSet.Count > 0;
         }
 
-        private IEnumerator MatchGems(IEnumerable<Gem> matchedGems)
+        private IEnumerator MatchGems(IEnumerable<Gem> matchedGems, Dictionary<GemEffectType, GemResult> results)
         {
-            yield return new WaitForSeconds(0.5f);
             foreach (Gem gem in matchedGems)
             {
                 (int, int) gemCoords = _gemDict.Get(gem);
                 _gemDict.Add(gem, (gemCoords.Item1, gemCoords.Item2));
-                gem.OnMatch();
+                gem.OnMatch(results);
             }
 
             yield return null;
         }
 
+        private Dictionary<GemEffectType, GemResult> BuildNewGemResultDictionary()
+        {
+            Dictionary<GemEffectType, GemResult> results = new Dictionary<GemEffectType, GemResult>();
+
+            GemResult attackResult = new GemResult
+                {Enemy = FindObjectOfType<Enemy>(), Player = _player, Guid = GUID.Generate()};
+            results[GemEffectType.Attack] = attackResult;
+
+
+            GemResult defenceResult = new GemResult {Player = _player, Guid = GUID.Generate()};
+            results[GemEffectType.Defend] = defenceResult;
+            return results;
+        }
 
         private bool GemsAreNextToOneAnother(Gem gem0, Gem gem1)
         {
@@ -275,11 +296,12 @@ namespace MatchThree.Board
             }
 
             // wait for all the gems to enter the board
+            _matchedGemsSet.Clear();
             yield return new WaitForGemsToReachDestination(newGems);
 
             foreach (Gem gem in newGems)
             {
-                yield return MatchGems(CheckForMatches(gem));
+                CheckForMatches(gem);
             }
         }
 

@@ -124,4 +124,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   matchType: 3
   moveSpeed: 5
-  gemAction: {fileID: 11400000, guid: 195fdd7e190e94005844ea3b18f0d0fd, type: 2}
+  gemAction: {fileID: 11400000, guid: 7e350468488bb4052b7325738f4d23f3, type: 2}

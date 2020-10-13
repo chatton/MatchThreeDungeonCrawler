@@ -6,6 +6,7 @@ namespace DungeonCrawler
     public class Player : MonoBehaviour
     {
         public event Action<Player> OnPlayerStatsChanged;
+        public event Action<Player, Enemy> OnAttack;
 
         public int Defence => _currentDefence;
 
@@ -16,6 +17,12 @@ namespace DungeonCrawler
         {
             _currentDefence += defenceAmount;
             OnPlayerStatsChanged?.Invoke(this);
+        }
+
+        public void Attack(Enemy enemy)
+        {
+            OnAttack?.Invoke(this, enemy);
+            
         }
     }
 }

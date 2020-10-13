@@ -1,4 +1,4 @@
-using DungeonCrawler;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MatchThree.Gems
@@ -8,9 +8,12 @@ namespace MatchThree.Gems
     {
         public int defenceAmount = 5;
 
-        public override void OnMatch(Player player)
+        public override void OnMatch(Dictionary<GemEffectType, GemResult> gemMatchResults)
         {
-            player.AddDefence(defenceAmount);
+            GemResult result = gemMatchResults[GemEffectType.Defend];
+            result.GemEffectType = GemEffectType.Defend;
+            result.PlayerDefenceModification += defenceAmount;
+            result.ActionTaken = true;
         }
     }
 }

@@ -1,4 +1,4 @@
-using DungeonCrawler;
+using System.Collections.Generic;
 using MatchThree.Board;
 using UnityEngine;
 
@@ -13,14 +13,7 @@ namespace MatchThree.Gems
         public MatchType MatchType => matchType;
         internal GameBoard GameBoard { get; set; }
         internal GemSource GemSource { get; set; }
-
-
-        private Player _player;
-
-        private void Awake()
-        {
-            _player = FindObjectOfType<Player>();
-        }
+        
 
         public bool HasReachedTargetPosition => Vector3.Distance(transform.localPosition, _targetPosition) <= 0.01f;
 
@@ -43,9 +36,9 @@ namespace MatchThree.Gems
             GemSource.ReturnToPool(this);
         }
 
-        public void OnMatch()
+        public void OnMatch(Dictionary<GemEffectType, GemResult> gemMatchResults)
         {
-            gemAction.OnMatch(_player);
+            gemAction.OnMatch(gemMatchResults);
             ReturnToPool();
         }
 
