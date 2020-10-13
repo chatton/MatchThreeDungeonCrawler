@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Util;
 
@@ -13,10 +11,7 @@ namespace MatchThree
         [SerializeField] private int height = 5;
         [SerializeField] private int matchNumber = 3;
 
-
         private static readonly HashSet<Gem> NoMatches = new HashSet<Gem>();
-
-        // private static readonly List<Gem> MatchList = new List<Gem>();
         private HashSet<Gem> _matchedGemsSet = new HashSet<Gem>();
         private HashSet<Gem> _matchedGemsHorizontalSet = new HashSet<Gem>();
         private HashSet<Gem> _matchedGemsVerticalSet = new HashSet<Gem>();
@@ -42,16 +37,29 @@ namespace MatchThree
         private void CreateBoard()
         {
             // generate the board relative the position of the containing object
+            // the starting board will contain no matches.
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
                 {
-                    Gem gem = _gemSource.GetNextGem();
-                    gem.transform.parent = transform;
-                    gem.transform.localPosition =
-                        new Vector3(i * gem.transform.localScale.x, j * gem.transform.localScale.y, 0);
-                    gem.name = $"gem_{i}_{j}";
-                    _gemDict.Add(gem, (i, j));
+                    Gem gem = null;
+                    do
+                    {
+                        _matchedGemsSet.Clear();
+                        if (gem != null)
+                        {
+                            gem.name = $"returned_gem_{i}_{j}";
+                            _gemDict.Remove(gem);
+                            gem.ReturnToPool();
+                        }
+
+                        gem = _gemSource.GetNextGem();
+                        gem.transform.parent = transform;
+                        gem.transform.localPosition =
+                            new Vector3(i * gem.transform.localScale.x, j * gem.transform.localScale.y, 0);
+                        gem.name = $"gem_{i}_{j}";
+                        _gemDict.Add(gem, (i, j));
+                    } while (CheckForMatches(gem).Count != 0);
                 }
             }
         }
@@ -153,7 +161,7 @@ namespace MatchThree
             {
                 (int, int) gemCoords = _gemDict.Get(gem);
                 _gemDict.Add(gem, (gemCoords.Item1, gemCoords.Item2));
-                gem.gameObject.SetActive(false);
+                gem.OnMatch();
             }
 
             yield return null;
@@ -226,6 +234,8 @@ namespace MatchThree
                 if (!gem.gameObject.activeSelf && coords.Item1 >= 0 && coords.Item1 < width && coords.Item2 >= 0 &&
                     coords.Item2 < width)
                 {
+                    Debug.Log(coords);
+                    Debug.Log($"Disabled gem {gem.name}", gem);
                     disabledGems.Add(gem);
                 }
             }
@@ -267,6 +277,11 @@ namespace MatchThree
             int currentY = gemCoords.Item2;
             while (currentY < height)
             {
+                if (!_gemDict.ContainsKey((gemCoords.Item1, currentY)))
+                {
+                    break;
+                }
+
                 Gem currentGem = _gemDict.Get((gemCoords.Item1, currentY));
                 if (!currentGem.gameObject.activeSelf)
                 {
@@ -286,6 +301,11 @@ namespace MatchThree
             currentY = gemCoords.Item2;
             while (currentY >= 0)
             {
+                if (!_gemDict.ContainsKey((gemCoords.Item1, currentY)))
+                {
+                    break;
+                }
+
                 Gem currentGem = _gemDict.Get((gemCoords.Item1, currentY));
                 if (!currentGem.gameObject.activeSelf)
                 {
@@ -322,6 +342,11 @@ namespace MatchThree
             int currentX = gemCoords.Item1;
             while (currentX < width)
             {
+                if (!_gemDict.ContainsKey((currentX, gemCoords.Item2)))
+                {
+                    break;
+                }
+
                 Gem currentGem = _gemDict.Get((currentX, gemCoords.Item2));
                 if (!currentGem.gameObject.activeSelf)
                 {
@@ -341,6 +366,11 @@ namespace MatchThree
             currentX = gemCoords.Item1;
             while (currentX >= 0)
             {
+                if (!_gemDict.ContainsKey((currentX, gemCoords.Item2)))
+                {
+                    break;
+                }
+
                 Gem currentGem = _gemDict.Get((currentX, gemCoords.Item2));
                 if (!currentGem.gameObject.activeSelf)
                 {

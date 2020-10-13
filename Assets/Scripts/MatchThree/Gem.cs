@@ -26,7 +26,15 @@ namespace MatchThree
             }
         }
 
-        private void OnDisable() => GemSource.ReturnToPool(this);
+        public void ReturnToPool()
+        {
+            GemSource.ReturnToPool(this);
+        }
+        
+        public void OnMatch()
+        {
+            ReturnToPool();   
+        }
 
         private void Update()
         {

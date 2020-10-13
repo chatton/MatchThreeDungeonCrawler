@@ -7,7 +7,7 @@ namespace Util
 {
     public class WaitForGemsToReachDestination : CustomYieldInstruction
     {
-        private IEnumerable<Gem> _gems;
+        private readonly IEnumerable<Gem> _gems;
 
         public WaitForGemsToReachDestination(IEnumerable<Gem> gems)
         {

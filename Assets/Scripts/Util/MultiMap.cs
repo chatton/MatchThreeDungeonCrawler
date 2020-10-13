@@ -20,6 +20,21 @@ namespace Util
             _dictionary2[t2] = t1;
         }
 
+        public bool Remove(T1 t1)
+        {
+            return _dictionary1.Remove(t1);
+        }
+
+        public bool ContainsKey(T2 t2)
+        {
+            return _dictionary2.ContainsKey(t2);
+        }
+
+        public bool ContainsKey(T1 t1)
+        {
+            return _dictionary1.ContainsKey(t1);
+        }
+
         public T1 Get(T2 t2)
         {
             return _dictionary2[t2];

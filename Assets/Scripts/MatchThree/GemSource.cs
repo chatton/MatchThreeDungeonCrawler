@@ -15,12 +15,12 @@ namespace MatchThree
         {
             _gems = new Queue<Gem>();
             _gameBoard = GetComponent<GameBoard>();
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 300; i++)
             {
                 Gem gem = Instantiate(gemPrefabs[Random.Range(0, gemPrefabs.Count)]);
                 gem.GameBoard = _gameBoard;
                 gem.GemSource = this;
-                gem.gameObject.SetActive(false);
+                ReturnToPool(gem);
             }
         }
 
@@ -34,6 +34,7 @@ namespace MatchThree
 
         public void ReturnToPool(Gem gem)
         {
+            gem.gameObject.SetActive(false);
             _gems.Enqueue(gem);
         }
     }
