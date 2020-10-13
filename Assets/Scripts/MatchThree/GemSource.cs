@@ -34,7 +34,6 @@ namespace MatchThree
 
         public void ReturnToPool(Gem gem)
         {
-            Debug.Log($"Gem {gem.name} is being returned");
             _gems.Enqueue(gem);
         }
     }

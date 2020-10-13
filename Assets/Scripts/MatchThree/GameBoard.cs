@@ -68,7 +68,7 @@ namespace MatchThree
                 yield return MatchGems(currentlySelectedGemMatches.Union(matches).ToList());
                 yield return new WaitForSeconds(0.2f);
                 CollapseColumns();
-                FillBoard();
+                yield return FillBoard();
                 CurrentlySelectedGem = null;
             }
             else
@@ -189,11 +189,11 @@ namespace MatchThree
                 return false;
             }
 
-            if (!SwappingGemsWouldResultInMatch(gem0, gem1))
-            {
-                Debug.Log("Attempted to match gems that would not have resulted in a match!");
-                return false;
-            }
+            // if (!SwappingGemsWouldResultInMatch(gem0, gem1))
+            // {
+            //     Debug.Log("Attempted to match gems that would not have resulted in a match!");
+            //     return false;
+            // }
 
             return true;
         }
@@ -216,7 +216,7 @@ namespace MatchThree
         }
 
 
-        private void FillBoard()
+        private IEnumerator FillBoard()
         {
             List<Gem> disabledGems = new List<Gem>();
             foreach (Gem gem in _gemDict)
@@ -229,14 +229,22 @@ namespace MatchThree
                 }
             }
 
+            List<Gem> newGems = new List<Gem>();
             foreach (Gem gem in disabledGems)
             {
                 Gem newGem = _gemSource.GetNextGem();
+                newGems.Add(newGem);
                 (int, int) cords = _gemDict.Get(gem);
                 newGem.transform.parent = transform;
                 newGem.SetPosition((cords.Item1, cords.Item2 + height));
                 _gemDict.Add(newGem, (cords.Item1, cords.Item2 + height));
                 SwapGems(newGem, gem);
+            }
+
+            yield return new WaitForSeconds(3);
+            foreach (Gem gem in newGems)
+            {
+                yield return MatchGems(CheckForMatches(gem));
             }
         }
 
