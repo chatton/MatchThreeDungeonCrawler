@@ -10,6 +10,8 @@ namespace MatchThree
         internal GameBoard GameBoard { get; set; }
         internal GemSource GemSource { get; set; }
 
+        public bool HasReachedTargetPosition => Vector3.Distance(transform.localPosition, _targetPosition) <= 0.05f;
+
         private Vector3 _targetPosition;
 
         public void UpdatePosition((int, int) oldPosition, (int, int) newPosition)

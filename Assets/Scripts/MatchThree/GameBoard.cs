@@ -242,7 +242,9 @@ namespace MatchThree
                 SwapGems(newGem, gem);
             }
 
-            // yield return new WaitForSeconds(3);
+            // wait for all the gems to enter the board
+            yield return new WaitForGemsToReachDestination(newGems);
+
             foreach (Gem gem in newGems)
             {
                 yield return MatchGems(CheckForMatches(gem));
