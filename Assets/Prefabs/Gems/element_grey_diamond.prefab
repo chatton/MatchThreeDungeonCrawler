@@ -123,5 +123,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   matchType: 4
-  moveSpeed: 5
+  moveSpeed: 10
   gemAction: {fileID: 11400000, guid: 7e350468488bb4052b7325738f4d23f3, type: 2}

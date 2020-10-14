@@ -1,12 +1,10 @@
 using DungeonCrawler;
-using UnityEditor;
 
 namespace MatchThree.Gems
 {
     public class GemResult
     {
         public bool ActionTaken { get; set; }
-        public GUID Guid { get; set; }
         public Player Player { get; set; }
         public GemEffectType GemEffectType { get; set; }
         public int PlayerDefenceModification { get; set; }

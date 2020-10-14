@@ -109,9 +109,10 @@ namespace MatchThree.Board
             {
                 Debug.Log(_matchedGemsSet.Count);
                 yield return MatchGems(_matchedGemsSet, results);
+                _matchedGemsSet.Clear();
                 yield return new WaitForSeconds(0.2f);
                 yield return CollapseColumns();
-                yield return MatchGems(_matchedGemsSet, results);
+                // yield return MatchGems(_matchedGemsSet, results);
                 yield return FillBoard();
             }
 
@@ -126,6 +127,7 @@ namespace MatchThree.Board
 
         private IEnumerator CollapseColumns()
         {
+            // _matchedGemsSet.Clear();
             for (int i = 0; i < width; i++)
             {
                 yield return CollapseColumn(i);
@@ -164,12 +166,16 @@ namespace MatchThree.Board
                     if (gemAbove != null)
                     {
                         SwapGems(gem, gemAbove);
-                        _matchedGemsSet.Clear();
+                        // _matchedGemsSet.Clear();
                         // yield return new WaitForGemsToReachDestination(gemAbove);
-                        yield return CheckForMatches(gemAbove);
+                        // yield return new WaitForGemsToReachDestination(gemAbove);
+                        CheckForMatches(gemAbove);
+                        CheckForMatches(gem);
                     }
                 }
             }
+
+            yield return null;
         }
 
         private bool SwappingGemsWouldResultInMatch(Gem gem0, Gem gem1)
@@ -204,11 +210,11 @@ namespace MatchThree.Board
             Dictionary<GemEffectType, GemResult> results = new Dictionary<GemEffectType, GemResult>();
 
             GemResult attackResult = new GemResult
-                {Enemy = FindObjectOfType<Enemy>(), Player = _player, Guid = GUID.Generate()};
+                {Enemy = FindObjectOfType<Enemy>(), Player = _player};
             results[GemEffectType.Attack] = attackResult;
 
 
-            GemResult defenceResult = new GemResult {Player = _player, Guid = GUID.Generate()};
+            GemResult defenceResult = new GemResult {Player = _player};
             results[GemEffectType.Defend] = defenceResult;
             return results;
         }
@@ -296,7 +302,7 @@ namespace MatchThree.Board
             }
 
             // wait for all the gems to enter the board
-            _matchedGemsSet.Clear();
+            // _matchedGemsSet.Clear();
             yield return new WaitForGemsToReachDestination(newGems);
 
             foreach (Gem gem in newGems)

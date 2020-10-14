@@ -43,7 +43,6 @@ namespace MatchThree.Gems
 
         private static IEnumerator HandleAttackAction(GemResult result)
         {
-            Debug.Log("ATTACK");
             Animator playerAnimator = result.Player.GetComponentInChildren<Animator>();
             playerAnimator.SetTrigger(Attack1);
 
@@ -56,7 +55,6 @@ namespace MatchThree.Gems
 
         private static IEnumerator HandleDefendAction(GemResult result)
         {
-            Debug.Log("DEFEND");
             result.Player.AddDefence(result.PlayerDefenceModification);
             yield return null;
         }

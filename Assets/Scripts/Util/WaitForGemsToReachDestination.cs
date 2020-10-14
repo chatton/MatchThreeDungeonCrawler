@@ -14,6 +14,11 @@ namespace Util
             _gems = gems;
         }
 
+        public WaitForGemsToReachDestination(Gem gem)
+        {
+            _gems = new List<Gem> {gem};
+        }
+
         public override bool keepWaiting => _gems.Any(gem => !gem.HasReachedTargetPosition);
     }
 }
