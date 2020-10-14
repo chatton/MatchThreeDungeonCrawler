@@ -9,11 +9,12 @@ namespace MatchThree.Gems
         [SerializeField] private MatchType matchType;
         [SerializeField] private float moveSpeed = 5f;
         [SerializeField] private GemAction gemAction;
+        [SerializeField] private GameObject matchEffect;
 
         public MatchType MatchType => matchType;
         internal GameBoard GameBoard { get; set; }
         internal GemSource GemSource { get; set; }
-        
+
 
         public bool HasReachedTargetPosition => Vector3.Distance(transform.localPosition, _targetPosition) <= 0.01f;
 
@@ -39,6 +40,15 @@ namespace MatchThree.Gems
         public void OnMatch(Dictionary<GemEffectType, GemResult> gemMatchResults)
         {
             gemAction.OnMatch(gemMatchResults);
+            // parent the object to same parent so local co-ordinates stay the same
+            GameObject sfx = Instantiate(matchEffect, transform.parent);
+
+            // if the target position is zero, it means we're being matched but we didn't move this match
+            // otherwise, we want to play the effect at the destination co-ordinate so the match looks
+            // natural
+            Vector3 pos = _targetPosition == Vector3.zero ? transform.localPosition : _targetPosition;
+            sfx.transform.localPosition = pos;
+            Destroy(sfx, 2);
             ReturnToPool();
         }
 

@@ -125,3 +125,4 @@ MonoBehaviour:
   matchType: 0
   moveSpeed: 10
   gemAction: {fileID: 11400000, guid: 7e350468488bb4052b7325738f4d23f3, type: 2}
+  matchEffect: {fileID: 100000, guid: 13d580f2bd28eb0429142dfcd28591fc, type: 3}

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using DungeonCrawler;
 using MatchThree.Gems;
-using UnityEditor;
 using UnityEngine;
 using Util;
 
@@ -107,12 +106,10 @@ namespace MatchThree.Board
             Dictionary<GemEffectType, GemResult> results = BuildNewGemResultDictionary();
             while (_matchedGemsSet.Count > 0)
             {
-                Debug.Log(_matchedGemsSet.Count);
                 yield return MatchGems(_matchedGemsSet, results);
-                _matchedGemsSet.Clear();
+
                 yield return new WaitForSeconds(0.2f);
                 yield return CollapseColumns();
-                // yield return MatchGems(_matchedGemsSet, results);
                 yield return FillBoard();
             }
 
@@ -127,7 +124,6 @@ namespace MatchThree.Board
 
         private IEnumerator CollapseColumns()
         {
-            // _matchedGemsSet.Clear();
             for (int i = 0; i < width; i++)
             {
                 yield return CollapseColumn(i);
@@ -166,11 +162,7 @@ namespace MatchThree.Board
                     if (gemAbove != null)
                     {
                         SwapGems(gem, gemAbove);
-                        // _matchedGemsSet.Clear();
-                        // yield return new WaitForGemsToReachDestination(gemAbove);
-                        // yield return new WaitForGemsToReachDestination(gemAbove);
                         CheckForMatches(gemAbove);
-                        CheckForMatches(gem);
                     }
                 }
             }
@@ -202,6 +194,7 @@ namespace MatchThree.Board
                 gem.OnMatch(results);
             }
 
+            _matchedGemsSet.Clear();
             yield return null;
         }
 
@@ -302,7 +295,6 @@ namespace MatchThree.Board
             }
 
             // wait for all the gems to enter the board
-            // _matchedGemsSet.Clear();
             yield return new WaitForGemsToReachDestination(newGems);
 
             foreach (Gem gem in newGems)
