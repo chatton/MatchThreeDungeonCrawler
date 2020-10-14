@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.chatton.coresystems": {
+      "version": "ssh://git@github.com/chatton/UnityCoreSystems.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "42798bc031d6861f79b7f3feefd4aec45f267d95"
+    },
     "com.unity.2d.animation": {
       "version": "4.2.4",
       "depth": 0,
