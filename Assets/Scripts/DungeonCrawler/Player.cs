@@ -9,36 +9,23 @@ namespace DungeonCrawler
         public event Action<Player> OnPlayerStatsChanged;
         public event Action<Player, Enemy> OnAttack;
 
-        public int Defence => _currentDefence;
-
-        private int _currentDefence;
+        public int Defence => _defence.CurrentDefence;
+        public Enemy SelectedEnemy { get; set; }
 
         private Health _health;
-
+        private Defence _defence;
 
         private void Awake()
         {
+            _defence = GetComponent<Defence>();
             _health = GetComponent<Health>();
         }
 
 
         public void AddDefence(int defenceAmount)
         {
-            _currentDefence += defenceAmount;
+            _defence.AddDefence(defenceAmount);
             OnPlayerStatsChanged?.Invoke(this);
-        }
-
-        public void Attack(Enemy enemy)
-        {
-            OnAttack?.Invoke(this, enemy);
-        }
-
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.K))
-            {
-                _health.Damage(10);
-            }
         }
     }
 }

@@ -12,7 +12,7 @@ namespace MatchThree.Gems
         {
             GemResult result = gemMatchResults[GemEffectType.Attack];
             result.GemEffectType = GemEffectType.Attack;
-            result.DamageAmount = attackAmount;
+            result.DamageAmount += attackAmount;
             result.ActionTaken = true;
         }
     }

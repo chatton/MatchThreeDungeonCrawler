@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0ed18ee8f8649d7afcec60eccf516d7, type: 3}
   m_Name: BasicAttack
   m_EditorClassIdentifier: 
-  defenceAmount: 5
+  gemEffectType: 0
+  attackAmount: 1

@@ -203,7 +203,7 @@ namespace MatchThree.Board
             Dictionary<GemEffectType, GemResult> results = new Dictionary<GemEffectType, GemResult>();
 
             GemResult attackResult = new GemResult
-                {Enemy = FindObjectOfType<Enemy>(), Player = _player};
+                {Enemy = _player.SelectedEnemy, Player = _player};
             results[GemEffectType.Attack] = attackResult;
 
 

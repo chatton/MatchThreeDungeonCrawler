@@ -46,6 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 5
   height: 5
+  matchNumber: 3
 --- !u!114 &1204106260108289367
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60,8 +61,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gemPrefabs:
   - {fileID: 8270798568176764541, guid: 2ce96f6a309dd0443955acf435ab7fb6, type: 3}
-  - {fileID: 7814161112489369113, guid: 6bf5ee3de7d13ca40a4eb87f7d7ebd80, type: 3}
-  - {fileID: -3589642720997654715, guid: bf557d2e6df54874b8e6548eb91c51c9, type: 3}
+  - {fileID: 8270798568176764541, guid: 2ce96f6a309dd0443955acf435ab7fb6, type: 3}
+  - {fileID: 8270798568176764541, guid: 2ce96f6a309dd0443955acf435ab7fb6, type: 3}
   - {fileID: 6202795457038358217, guid: b84c38e27f9fd6a44a7a54aa2fff8dd1, type: 3}
   - {fileID: -3039745434017176281, guid: 2b50c5f3f2bad5c499a3d81351beb8d4, type: 3}
   - {fileID: 33394887291257891, guid: 827f585e8526dc34b9672086719ed792, type: 3}
@@ -72,7 +73,7 @@ MonoBehaviour:
   - {fileID: -6557176876876716625, guid: e80431a9b9c31884582d392472c54a25, type: 3}
   - {fileID: 1033289432178272126, guid: f3e6184b7436eca4eb7b8729ed29f3a6, type: 3}
   - {fileID: 8064105322144631192, guid: 7e84fa964470a9c4d9e3fcb998a02063, type: 3}
-  - {fileID: -1367307542814362436, guid: 71e00ea1774bdd840ba97cd78ddcb35d, type: 3}
+  - {fileID: 1033289432178272126, guid: f3e6184b7436eca4eb7b8729ed29f3a6, type: 3}
   - {fileID: 6726640422447780548, guid: b9f1bb75dd162084b9f8614f4c98ffa5, type: 3}
   - {fileID: 4765896226454940699, guid: 8c6380f2f792082409309eb86c827c02, type: 3}
   - {fileID: 2165179313580306670, guid: 8a23114fc8faa3f48bba7622a97165dc, type: 3}

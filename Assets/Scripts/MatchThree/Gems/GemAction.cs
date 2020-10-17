@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DungeonCrawler;
+using HealthSystem;
 using UnityEngine;
 
 namespace MatchThree.Gems
@@ -50,6 +51,9 @@ namespace MatchThree.Gems
 
             Animator enemyAnimator = result.Enemy.GetComponentInChildren<Animator>();
             enemyAnimator.SetTrigger(Hurt);
+
+            result.Enemy.GetComponent<Health>().Damage(result.DamageAmount);
+
             yield return null;
         }
 
