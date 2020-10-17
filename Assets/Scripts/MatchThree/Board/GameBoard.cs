@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using DungeonCrawler;
+using DungeonCrawler.PlayerCharacter;
 using MatchThree.Gems;
 using UnityEngine;
 using Util;
@@ -113,7 +113,21 @@ namespace MatchThree.Board
                 yield return FillBoard();
             }
 
+            DepleteStaminaIfActionWasTaken(results);
+
             yield return GemAction.PerformActions(results);
+        }
+
+        private void DepleteStaminaIfActionWasTaken(Dictionary<GemEffectType, GemResult> results)
+        {
+            foreach (GemResult result in results.Values)
+            {
+                if (result.ActionTaken)
+                {
+                    Player.Instance.DepleteStamina();
+                    break;
+                }
+            }
         }
 
         public void SelectGem(Gem gem)

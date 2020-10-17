@@ -1,3 +1,4 @@
+using DungeonCrawler.PlayerCharacter;
 using DungeonCrawler.UI;
 using UnityEngine;
 
@@ -7,8 +8,14 @@ namespace DungeonCrawler
     {
         [SerializeField] private Transform selectionArrow;
 
+
         private Player _player;
 
+
+        public void SelectEnemy()
+        {
+            EnemySelectionIcon.DisplayIcon(selectionArrow.position);
+        }
 
         private void Awake()
         {
@@ -18,7 +25,7 @@ namespace DungeonCrawler
         private void OnMouseDown()
         {
             _player.SelectedEnemy = this;
-            EnemySelectionIcon.DisplayIcon(selectionArrow.position);
+            SelectEnemy();
         }
     }
 }

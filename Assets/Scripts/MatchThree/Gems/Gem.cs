@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DungeonCrawler.PlayerCharacter;
 using MatchThree.Board;
 using UnityEngine;
 
@@ -65,6 +66,11 @@ namespace MatchThree.Gems
 
         public void OnMouseDown()
         {
+            if (!Player.Instance.CanTakeAction())
+            {
+                return;
+            }
+
             GameBoard.SelectGem(this);
         }
 

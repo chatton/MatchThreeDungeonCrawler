@@ -12,6 +12,7 @@ namespace DungeonCrawler.UI
             _spriteRenderer = GetComponent<SpriteRenderer>();
             _spriteRenderer.enabled = false;
         }
+        
 
         public static void DisplayIcon(Vector3 pos)
         {
