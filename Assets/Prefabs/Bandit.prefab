@@ -183,6 +183,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectionArrow: {fileID: 1247292834109893939}
+  allActions:
+  - {fileID: 11400000, guid: 156bb4dac4f11458494329bde01a9045, type: 2}
 --- !u!114 &365253099149826911
 MonoBehaviour:
   m_ObjectHideFlags: 0

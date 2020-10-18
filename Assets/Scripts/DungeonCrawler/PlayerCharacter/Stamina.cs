@@ -1,7 +1,11 @@
+using System;
+
 namespace DungeonCrawler.PlayerCharacter
 {
     public class Stamina
     {
+        public event Action OnStaminaDepleted;
+
         private int _maxStamina;
 
         public Stamina(int numberOfActions)
@@ -19,7 +23,11 @@ namespace DungeonCrawler.PlayerCharacter
 
         public void DepleteStamina(int amount = 1)
         {
-            CurrentStamina--;
+            CurrentStamina -= amount;
+            if (CurrentStamina <= 0)
+            {
+                OnStaminaDepleted?.Invoke();
+            }
         }
 
         public void ReplenishStamina()

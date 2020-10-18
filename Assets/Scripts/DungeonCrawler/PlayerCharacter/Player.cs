@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Core.Util;
+using DungeonCrawler.Animations;
+using DungeonCrawler.Battle;
 using DungeonCrawler.Enemies;
 using DungeonCrawler.UI;
 using HealthSystem;
@@ -18,7 +20,6 @@ namespace DungeonCrawler.PlayerCharacter
         public event Action<Stamina> OnStaminaChanged;
 
         public event Action<Player> OnPlayerStatsChanged;
-        public event Action<Player, Enemy> OnAttack;
 
         public int Defence => _defence.CurrentDefence;
         public Enemy SelectedEnemy { get; set; }
@@ -28,6 +29,7 @@ namespace DungeonCrawler.PlayerCharacter
         private Health _health;
         private Defence _defence;
         private Stats _stats;
+        private PlayerAnimationController _playerAnimationController;
 
         private Stamina _stamina;
 
@@ -36,7 +38,9 @@ namespace DungeonCrawler.PlayerCharacter
             _stats = GetComponent<Stats>();
             _defence = GetComponent<Defence>();
             _health = GetComponent<Health>();
+            _playerAnimationController = GetComponent<PlayerAnimationController>();
             _stamina = new Stamina(startingStamina);
+            _stamina.OnStaminaDepleted += BattleController.Instance.EndPlayerTurn;
             _staminaSpheres = BuildStaminaSpheres();
         }
 
@@ -96,6 +100,42 @@ namespace DungeonCrawler.PlayerCharacter
                     staminaSphere.Deplete();
                 }
             }
+        }
+
+        public void OnBeginTurn()
+        {
+            _stamina.ReplenishStamina();
+            OnStaminaChanged?.Invoke(_stamina);
+            foreach (StaminaSphere staminaSphere in _staminaSpheres)
+            {
+                staminaSphere.Replenish();
+            }
+
+            _defence.ResetDefence();
+        }
+
+        public void Damage(int totalDamageAmount)
+        {
+            _playerAnimationController.ReceiveDamage(totalDamageAmount);
+
+
+            int damageAfterDefence = totalDamageAmount - Defence;
+
+            // damage done to health
+            if (damageAfterDefence > 0)
+            {
+                // we've lost all defence
+                _defence.ResetDefence();
+                // health takes the remainder of the damage
+                _health.Damage(damageAfterDefence);
+            }
+            else
+            {
+                // we blocked all damage
+                _defence.RemoveDefence(totalDamageAmount);
+            }
+
+            OnPlayerStatsChanged?.Invoke(this);
         }
     }
 }

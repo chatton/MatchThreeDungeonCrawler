@@ -1,3 +1,4 @@
+using DungeonCrawler.PlayerCharacter;
 using TMPro;
 using UnityEngine;
 

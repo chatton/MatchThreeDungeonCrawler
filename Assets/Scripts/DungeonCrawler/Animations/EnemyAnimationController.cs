@@ -8,10 +8,8 @@ namespace DungeonCrawler.Animations
         private Animator _animator;
         private Enemy _enemy;
 
-        private static readonly int IdleBlock = Animator.StringToHash("IdleBlock");
-        private static readonly int Block = Animator.StringToHash("Block");
         private static readonly int Hurt = Animator.StringToHash("Hurt");
-        private static readonly int Attack1 = Animator.StringToHash("Attack1");
+        private static readonly int AttackHash = Animator.StringToHash("Attack");
 
         private void Awake()
         {
@@ -22,7 +20,7 @@ namespace DungeonCrawler.Animations
 
         public void Attack()
         {
-            _animator.SetTrigger(Attack1);
+            _animator.SetTrigger(AttackHash);
         }
     }
 }

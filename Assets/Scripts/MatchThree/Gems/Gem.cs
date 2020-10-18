@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DungeonCrawler.Battle;
 using DungeonCrawler.PlayerCharacter;
 using MatchThree.Board;
 using UnityEngine;
@@ -66,6 +67,13 @@ namespace MatchThree.Gems
 
         public void OnMouseDown()
         {
+            // cannot select gems when it is not the player's turn
+            if (!BattleController.Instance.IsPlayerTurn)
+            {
+                return;
+            }
+
+            // if the player has no stamina, we can't select the gem!
             if (!Player.Instance.CanTakeAction())
             {
                 return;

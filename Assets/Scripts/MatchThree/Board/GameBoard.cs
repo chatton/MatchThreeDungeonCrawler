@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Core.Util;
 using DungeonCrawler.PlayerCharacter;
 using MatchThree.Gems;
 using UnityEngine;
@@ -7,7 +8,7 @@ using Util;
 
 namespace MatchThree.Board
 {
-    public class GameBoard : MonoBehaviour
+    public class GameBoard : Singleton<GameBoard>
     {
         [SerializeField] private int width = 5;
         [SerializeField] private int height = 5;
@@ -23,7 +24,7 @@ namespace MatchThree.Board
         private GemSource _gemSource;
         private MultiMap<Gem, (int, int)> _gemDict;
 
-        private bool _matchInProgress;
+        public bool MatchInProgress { get; private set; }
 
         private Player _player;
 
@@ -80,12 +81,12 @@ namespace MatchThree.Board
                 yield break;
             }
 
-            if (_matchInProgress)
+            if (MatchInProgress)
             {
                 yield return null;
             }
 
-            _matchInProgress = true;
+            MatchInProgress = true;
 
             Gem currentGem = CurrentlySelectedGem;
             CurrentlySelectedGem = null;
@@ -95,7 +96,7 @@ namespace MatchThree.Board
                 yield return MatchUntilStable();
             }
 
-            _matchInProgress = false;
+            MatchInProgress = false;
         }
 
 

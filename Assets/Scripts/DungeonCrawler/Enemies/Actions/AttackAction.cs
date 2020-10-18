@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using DungeonCrawler.Animations;
 using DungeonCrawler.PlayerCharacter;
 using UnityEngine;
@@ -18,11 +17,10 @@ namespace DungeonCrawler.Enemies.Actions
 
             EnemyAnimationController eac = enemy.GetComponent<EnemyAnimationController>();
             eac.Attack();
-            
-            yield return new WaitForSeconds(0.5f);
 
-            PlayerAnimationController pac = player.GetComponent<PlayerAnimationController>();
-            pac.ReceiveDamage(totalDamageAmount);
+            yield return new WaitForSeconds(1f);
+
+            player.Damage(totalDamageAmount);
             yield return null;
         }
     }
