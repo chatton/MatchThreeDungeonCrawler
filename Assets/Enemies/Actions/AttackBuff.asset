@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6006c471798a40e1855915e74a316be7, type: 3}
   m_Name: AttackBuff
   m_EditorClassIdentifier: 
-  actionPreviewPrefab: {fileID: 7730650430670876248, guid: 70ee6abb6c1234a3ca1d73d32776c5a8,
+  actionPreviewPrefab: {fileID: 1777888122631401941, guid: 70ee6abb6c1234a3ca1d73d32776c5a8,
     type: 3}
+  attackPower: 10
+  turnDuration: 3

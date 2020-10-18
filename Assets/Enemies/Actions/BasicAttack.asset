@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db5ba57d9d9a4e75a809d230254b67c5, type: 3}
   m_Name: BasicAttack
   m_EditorClassIdentifier: 
-  actionPreviewPrefab: {fileID: 2022185858524165733, guid: 675196d23dce34e21b2999a769f0db87,
+  actionPreviewPrefab: {fileID: 7511490005779938785, guid: 675196d23dce34e21b2999a769f0db87,
     type: 3}
   damageAmount: 10
