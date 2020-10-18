@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db5ba57d9d9a4e75a809d230254b67c5, type: 3}
-  m_Name: BasicAttack
+  m_Script: {fileID: 11500000, guid: 6006c471798a40e1855915e74a316be7, type: 3}
+  m_Name: AttackBuff
   m_EditorClassIdentifier: 
-  actionPreviewPrefab: {fileID: 2022185858524165733, guid: 675196d23dce34e21b2999a769f0db87,
+  actionPreviewPrefab: {fileID: 7730650430670876248, guid: 70ee6abb6c1234a3ca1d73d32776c5a8,
     type: 3}
-  damageAmount: 10

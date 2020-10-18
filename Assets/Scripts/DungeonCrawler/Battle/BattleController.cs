@@ -1,6 +1,7 @@
 using System.Collections;
 using Core.Util;
 using DungeonCrawler.Enemies;
+using DungeonCrawler.Enemies.Actions;
 using DungeonCrawler.PlayerCharacter;
 using MatchThree.Board;
 using UnityEngine;
@@ -9,8 +10,8 @@ namespace DungeonCrawler.Battle
 {
     public class BattleController : Singleton<BattleController>
     {
-        private Enemy[] allEnemies;
-        private bool battleIsOver;
+        private Enemy[] _allEnemies;
+        private bool _battleIsOver;
 
         public bool IsPlayerTurn { get; private set; }
 
@@ -21,16 +22,17 @@ namespace DungeonCrawler.Battle
 
         private IEnumerator Start()
         {
-            allEnemies = FindObjectsOfType<Enemy>();
+            _allEnemies = FindObjectsOfType<Enemy>();
             yield return BeginBattle();
         }
 
         private IEnumerator BeginBattle()
         {
             Debug.Log("Beginning Battle!");
-            while (!battleIsOver)
+            while (!_battleIsOver)
             {
-                yield return SelectEnemyActions();
+                BeginEnemyTurn();
+                SelectEnemyActions();
                 yield return TakePlayerTurn();
                 yield return new WaitUntil(() => !GameBoard.Instance.MatchInProgress);
                 yield return TakeEnemyTurn();
@@ -41,12 +43,11 @@ namespace DungeonCrawler.Battle
 
         private IEnumerator TakeEnemyTurn()
         {
-            foreach (Enemy enemy in allEnemies)
+            foreach (Enemy enemy in _allEnemies)
             {
                 if (enemy != null)
                 {
-                    Debug.Log($"Enemy: {enemy.name} performing action!");
-                    yield return enemy.GetActionThisTurn().Use(Player.Instance, enemy);
+                    yield return enemy.PerformAction(Player.Instance);
                     yield return new WaitForSeconds(1f);
                 }
             }
@@ -67,9 +68,27 @@ namespace DungeonCrawler.Battle
             Debug.Log("Ending Player Turn");
         }
 
-        private IEnumerator SelectEnemyActions()
+        private void BeginEnemyTurn()
         {
-            yield return null;
+            foreach (Enemy enemy in _allEnemies)
+            {
+                if (enemy != null)
+                {
+                    enemy.OnTurnBegin();
+                }
+            }
+        }
+
+        private void SelectEnemyActions()
+        {
+            foreach (Enemy enemy in _allEnemies)
+            {
+                if (enemy != null)
+                {
+                    EnemyAction action = enemy.GetActionThisTurn();
+                    enemy.SetAction(action);
+                }
+            }
         }
     }
 }

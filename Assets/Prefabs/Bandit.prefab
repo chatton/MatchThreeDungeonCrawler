@@ -102,6 +102,36 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!1 &3670389128205892647
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4810338508432204933}
+  m_Layer: 5
+  m_Name: AttackPreview
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4810338508432204933
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3670389128205892647}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.646, y: 2.993, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0}
+  m_Children: []
+  m_Father: {fileID: 2228045162540418858}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6124160958574529723
 GameObject:
   m_ObjectHideFlags: 0
@@ -167,6 +197,7 @@ Transform:
   - {fileID: 1745209101755441586}
   - {fileID: 2213039708441206397}
   - {fileID: 1247292834109893939}
+  - {fileID: 4810338508432204933}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -183,8 +214,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectionArrow: {fileID: 1247292834109893939}
+  attackPreviewLocation: {fileID: 4810338508432204933}
   allActions:
   - {fileID: 11400000, guid: 156bb4dac4f11458494329bde01a9045, type: 2}
+  - {fileID: 11400000, guid: 85f3a59ee27804c7e80e065372089468, type: 2}
 --- !u!114 &365253099149826911
 MonoBehaviour:
   m_ObjectHideFlags: 0
