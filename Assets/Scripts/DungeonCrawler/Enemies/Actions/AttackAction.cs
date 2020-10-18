@@ -10,6 +10,7 @@ namespace DungeonCrawler.Enemies.Actions
     {
         public int damageAmount = 10;
 
+
         public override IEnumerator Use(Player player, Enemy enemy)
         {
             Stats enemyStats = enemy.GetComponent<Stats>();

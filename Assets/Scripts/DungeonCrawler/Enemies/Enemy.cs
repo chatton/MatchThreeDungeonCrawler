@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DungeonCrawler.Enemies.Actions;
 using DungeonCrawler.PlayerCharacter;
 using DungeonCrawler.UI;
+using DungeonCrawler.UI.ActionPreviews;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -19,7 +20,7 @@ namespace DungeonCrawler.Enemies
         [SerializeField] private List<EnemyAction> allActions;
 
 
-        private GameObject _lastAttackPreview;
+        private ActionPreview _lastAttackPreview;
         private Stats _stats;
 
         private EnemyAction CurrentAction { get; set; }
@@ -47,10 +48,11 @@ namespace DungeonCrawler.Enemies
                 CurrentAction = action;
                 if (_lastAttackPreview != null)
                 {
-                    Destroy(_lastAttackPreview);
+                    Destroy(_lastAttackPreview.gameObject);
                 }
 
                 _lastAttackPreview = Instantiate(action.actionPreviewPrefab, attackPreviewLocation.transform);
+                _lastAttackPreview.Init(CurrentAction, this);
             }
         }
 
