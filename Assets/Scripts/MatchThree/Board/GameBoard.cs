@@ -103,31 +103,40 @@ namespace MatchThree.Board
         // and refill the board until there are no more matches
         private IEnumerator MatchUntilStable()
         {
+            bool actionTaken = false;
             Dictionary<GemEffectType, GemResult> results = BuildNewGemResultDictionary();
             while (_matchedGemsSet.Count > 0)
             {
                 yield return MatchGems(_matchedGemsSet, results);
+
+                // ensure that stamina drain only happens a single time
+                // but also happens before the chain reaction happens so it feels
+                // more responsive.
+                if (!actionTaken)
+                {
+                    actionTaken = DepleteStaminaIfActionWasTaken(results);
+                }
 
                 yield return new WaitForSeconds(0.2f);
                 yield return CollapseColumns();
                 yield return FillBoard();
             }
 
-            DepleteStaminaIfActionWasTaken(results);
-
             yield return GemAction.PerformActions(results);
         }
 
-        private void DepleteStaminaIfActionWasTaken(Dictionary<GemEffectType, GemResult> results)
+        private bool DepleteStaminaIfActionWasTaken(Dictionary<GemEffectType, GemResult> results)
         {
             foreach (GemResult result in results.Values)
             {
                 if (result.ActionTaken)
                 {
                     Player.Instance.DepleteStamina();
-                    break;
+                    return true;
                 }
             }
+
+            return false;
         }
 
         public void SelectGem(Gem gem)

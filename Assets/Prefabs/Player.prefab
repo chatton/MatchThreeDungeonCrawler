@@ -63,7 +63,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6814dee59d94ea19e3a3fe6695867ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingStamina: 3
+  startingStamina: 4
   staminaSpherePrefab: {fileID: 8295298938750306390, guid: 12ac09c63044e4fe3832b1038c1dc242,
     type: 3}
   staminaSphereStartPoint: {fileID: 7509215336908534179}

@@ -14,7 +14,7 @@ namespace DungeonCrawler.PlayerCharacter
         [SerializeField] private Transform staminaSphereStartPoint;
 
         private List<StaminaSphere> _staminaSpheres;
-
+        public event Action<Stamina> OnStaminaChanged;
 
         public event Action<Player> OnPlayerStatsChanged;
         public event Action<Player, Enemy> OnAttack;
@@ -35,7 +35,15 @@ namespace DungeonCrawler.PlayerCharacter
             _health = GetComponent<Health>();
             _stamina = new Stamina(startingStamina);
             _staminaSpheres = BuildStaminaSpheres();
+        }
 
+        private void Start()
+        {
+            SelectFirstEnemy();
+        }
+
+        private void SelectFirstEnemy()
+        {
             Enemy e = FindObjectOfType<Enemy>();
             SelectedEnemy = e;
             if (e != null)
@@ -43,7 +51,6 @@ namespace DungeonCrawler.PlayerCharacter
                 e.SelectEnemy();
             }
         }
-
 
         private List<StaminaSphere> BuildStaminaSpheres()
         {
@@ -73,6 +80,7 @@ namespace DungeonCrawler.PlayerCharacter
         public void DepleteStamina()
         {
             _stamina.DepleteStamina();
+            OnStaminaChanged?.Invoke(_stamina);
             for (int i = 0; i < _staminaSpheres.Count; i++)
             {
                 StaminaSphere staminaSphere = _staminaSpheres[i];
