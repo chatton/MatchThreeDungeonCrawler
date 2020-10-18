@@ -1,4 +1,4 @@
-using DungeonCrawler;
+using DungeonCrawler.Enemies;
 using DungeonCrawler.PlayerCharacter;
 
 namespace MatchThree.Gems

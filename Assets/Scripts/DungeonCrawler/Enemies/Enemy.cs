@@ -2,29 +2,27 @@ using DungeonCrawler.PlayerCharacter;
 using DungeonCrawler.UI;
 using UnityEngine;
 
-namespace DungeonCrawler
+namespace DungeonCrawler.Enemies
 {
     public class Enemy : MonoBehaviour
     {
         [SerializeField] private Transform selectionArrow;
 
+        private Stats _stats;
 
-        private Player _player;
-
+        private void Awake()
+        {
+            _stats = GetComponent<Stats>();
+        }
 
         public void SelectEnemy()
         {
             EnemySelectionIcon.DisplayIcon(selectionArrow.position);
         }
 
-        private void Awake()
-        {
-            _player = FindObjectOfType<Player>();
-        }
-
         private void OnMouseDown()
         {
-            _player.SelectedEnemy = this;
+            Player.Instance.SelectedEnemy = this;
             SelectEnemy();
         }
     }

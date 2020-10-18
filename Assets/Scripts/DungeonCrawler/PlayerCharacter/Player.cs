@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Core.Util;
+using DungeonCrawler.Enemies;
 using DungeonCrawler.UI;
 using HealthSystem;
 using UnityEngine;
@@ -26,11 +27,13 @@ namespace DungeonCrawler.PlayerCharacter
         // Components
         private Health _health;
         private Defence _defence;
+        private Stats _stats;
 
         private Stamina _stamina;
 
         private void Awake()
         {
+            _stats = GetComponent<Stats>();
             _defence = GetComponent<Defence>();
             _health = GetComponent<Health>();
             _stamina = new Stamina(startingStamina);
